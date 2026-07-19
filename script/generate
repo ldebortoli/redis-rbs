@@ -1,0 +1,194 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "fileutils"
+require "open3"
+require "rbconfig"
+require "yaml"
+
+ROOT = File.expand_path("..", __dir__)
+REDIS = Gem::Specification.find_by_name("redis", ">= 5.4.0", "< 5.5")
+SOURCE_ROOT = REDIS.full_gem_path
+SOURCE_FILES = Dir[File.join(SOURCE_ROOT, "lib/**/*.rb")].sort.freeze
+RETURN_OVERRIDES = {
+  "close" => "nil",
+  "dump" => "String?",
+  "get" => "String?",
+  "getdel" => "String?",
+  "getex" => "String?",
+  "getrange" => "String",
+  "getset" => "String?",
+  "hget" => "String?",
+  "lindex" => "String?",
+  "randomkey" => "String?",
+  "zscore" => "Float?"
+}.freeze
+
+def split_top_level(text, separators = [",", "|"])
+  depths = Hash.new(0)
+  pairs = { "<" => ">", "{" => "}", "[" => "]", "(" => ")" }
+  reverse = pairs.invert
+  quote = nil
+  start = 0
+  parts = []
+
+  text.each_char.with_index do |char, index|
+    if quote
+      quote = nil if char == quote && text[index - 1] != "\\"
+      next
+    end
+    if ["'", '"'].include?(char)
+      quote = char
+      next
+    end
+    depths[char] += 1 if pairs.key?(char)
+    depths[reverse.fetch(char)] -= 1 if reverse.key?(char)
+    next unless separators.include?(char) && depths.values.all?(&:zero?)
+
+    parts << text[start...index].strip
+    start = index + 1
+  end
+  parts << text[start..].strip
+  parts.reject(&:empty?)
+end
+
+def yard_type(raw)
+  text = raw.to_s.strip.sub(/\Aoptional,\s*/, "")
+  return "untyped" if text.empty? || text.include?("...")
+
+  alternatives = split_top_level(text)
+  if alternatives.length > 1
+    types = alternatives.map { |item| yard_type(item) }.uniq
+    return "untyped" if types.include?("untyped")
+
+    return "(#{types.join(' | ')})"
+  end
+
+  if text.start_with?("[") && text.end_with?("]")
+    values = split_top_level(text[1...-1], [","])
+    return "[#{values.map { |value| yard_type(value) }.join(', ')}]"
+  end
+
+  if (match = text.match(/\AHash\s*\{(.+)\}\z/))
+    key, value = match[1].split(/\s*=>\s*/, 2)
+    return "Hash[untyped, untyped]" unless value
+
+    return "Hash[#{yard_type(key)}, #{yard_type(value)}]"
+  end
+
+  if (match = text.match(/\A([A-Za-z_:]+)<(.+)>\z/))
+    container = match[1]
+    parameters = split_top_level(match[2], [","]).map { |value| yard_type(value) }
+    if container == "Array" && parameters.length > 1
+      parameters = [parameters.include?("untyped") ? "untyped" : "(#{parameters.join(' | ')})"]
+    elsif container == "Enumerator" && parameters.length == 1
+      parameters << "untyped"
+    end
+    return "#{container}[#{parameters.join(', ')}]"
+  end
+
+  primitives = {
+    "Array" => "Array[untyped]",
+    "Boolean" => "bool",
+    "Enumerator" => "Enumerator[untyped, untyped]",
+    "FalseClass" => "false",
+    "Hash" => "Hash[untyped, untyped]",
+    "Object" => "untyped",
+    "TrueClass" => "true",
+    "nil" => "nil",
+    "self" => "self"
+  }
+  return primitives[text] if primitives.key?(text)
+  return text.tr("'", '"') if text.match?(/\A'[^']+'\z/)
+  return text if text.match?(/\A(?:String|Symbol|Integer|Float|Numeric|Regexp)\z/)
+  return text if text.match?(/\A(?:::)?[A-Z][A-Za-z0-9_:]*\z/)
+
+  "untyped"
+end
+
+def enrich(prototype)
+  params = {}
+  return_type = nil
+  output = []
+
+  prototype.each_line do |line|
+    if (match = line.match(/^\s*#\s*@param\s+\[(.+)\]\s+([*]*[A-Za-z_][A-Za-z0-9_]*)/))
+      params[match[2].delete_prefix("*")] = yard_type(match[1])
+      next
+    end
+    if (match = line.match(/^\s*#\s*@return\s+\[(.+)\]/))
+      return_type = yard_type(match[1])
+      next
+    end
+    next if line.lstrip.start_with?("#")
+
+    if (method_match = line.match(/^\s*def\s+(?:self\.)?([^: ]+):/))
+      params.each do |name, type|
+        names = [name, name.sub(/\A_+/, "")].uniq
+        names.each do |candidate|
+          line = line.gsub(/\buntyped\?? #{Regexp.escape(candidate)}\b/, "#{type} #{candidate}")
+          line = line.gsub(/([?]?)#{Regexp.escape(candidate)}: untyped\??\b/, "\\1#{candidate}: #{type}")
+        end
+      end
+
+      override = RETURN_OVERRIDES[method_match[1]]
+      if override && line.match?(/-> [^{}]+\s*$/)
+        line = line.sub(/-> [^{}]+\s*$/, "-> #{override}\n")
+      elsif return_type && line.match?(/-> (?:untyped|\(untyped \| nil\))\s*$/)
+        line = line.sub(/-> (?:untyped|\(untyped \| nil\))\s*$/, "-> #{return_type}\n")
+      elsif line.match?(/^\s*def [^:!?]+\?:/) && line.match?(/-> untyped\s*$/)
+        line = line.sub(/-> untyped\s*$/, "-> bool\n")
+      end
+
+      params = {}
+      return_type = nil
+    elsif !line.strip.empty? && !line.match?(/^\s*(?:private|protected|public)\s*$/)
+      params = {}
+      return_type = nil
+    end
+
+    output << line
+  end
+
+  output.join.gsub(/\n{3,}/, "\n\n")
+end
+
+rbs_executable = Gem.bin_path("rbs", "rbs")
+stdout, stderr, status = Open3.capture3(RbConfig.ruby, rbs_executable, "prototype", "rb", *SOURCE_FILES)
+raise "rbs prototype failed:\n#{stderr}" unless status.success?
+
+signature = enrich(stdout)
+signature = signature.gsub("class Client < ::RedisClient", "class Client")
+signature = signature.sub("class Redis\n", <<~RBS)
+  # Generated from redis #{REDIS.version}. Do not edit by hand.
+  class Redis
+    type key = String | Symbol
+    type scalar = nil | bool | Integer | Float | String | Symbol
+    type reply = scalar | Array[reply] | Hash[scalar, reply]
+RBS
+
+signature_root = File.join(ROOT, "sig")
+FileUtils.rm_rf(signature_root)
+FileUtils.mkdir_p(signature_root)
+File.write(File.join(signature_root, "redis.rbs"), signature, mode: "w:UTF-8")
+
+source_methods = SOURCE_FILES.sum do |path|
+  File.read(path).scan(/^\s*def\s+(?:self\.)?[^\s(]+/).length
+end
+signature_methods = signature.scan(/^\s*def\s+(?:self\.)?[^: ]+:/).length
+typed_returns = signature.lines.count do |line|
+  line.match?(/^\s*def /) && !line.match?(/-> (?:untyped|\(untyped \| nil\))\s*$/)
+end
+
+coverage = {
+  "redis_version" => REDIS.version.to_s,
+  "source_files" => SOURCE_FILES.length,
+  "source_method_definitions" => source_methods,
+  "signature_method_declarations" => signature_methods,
+  "typed_return_declarations" => typed_returns
+}
+FileUtils.mkdir_p(File.join(ROOT, "data"))
+File.write(File.join(ROOT, "data/coverage.yml"), YAML.dump(coverage), mode: "w:UTF-8")
+
+puts "Generated #{signature_methods} method declarations from #{source_methods} Redis definitions; #{typed_returns} have non-untyped returns"

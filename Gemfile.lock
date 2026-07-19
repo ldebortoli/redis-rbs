@@ -1,0 +1,35 @@
+PATH
+  remote: .
+  specs:
+    redis-rbs (0.1.0)
+      redis (>= 5.4.0, < 5.5)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    connection_pool (3.0.2)
+    logger (1.7.0)
+    minitest (5.27.0)
+    prism (1.9.0)
+    rake (13.4.2)
+    rbs (4.0.3)
+      logger
+      prism (>= 1.6.0)
+      tsort
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.30.0)
+      connection_pool
+    tsort (0.2.0)
+
+PLATFORMS
+  x64-mingw-ucrt
+
+DEPENDENCIES
+  minitest (~> 5.0)
+  rake (~> 13.0)
+  rbs (>= 3.8, < 5)
+  redis-rbs!
+
+BUNDLED WITH
+   2.6.9

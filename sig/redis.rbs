@@ -1,0 +1,1369 @@
+# Generated from redis 5.4.1. Do not edit by hand.
+class Redis
+  type key = String | Symbol
+  type scalar = nil | bool | Integer | Float | String | Symbol
+  type reply = scalar | Array[reply] | Hash[scalar, reply]
+  @monitor: untyped
+
+  @options: untyped
+
+  @subscription_client: untyped
+
+  @client: untyped
+
+  BASE_PATH: untyped
+
+  Deprecated: untyped
+
+  attr_accessor self.silence_deprecations: untyped
+
+  attr_accessor self.raise_deprecations: untyped
+
+  def self.deprecate!: (untyped message) -> (untyped | nil)
+
+  module Connection
+    def self.drivers: () -> ::Array[untyped]
+  end
+
+  include Commands
+
+  SERVER_URL_OPTIONS: ::Array[:url | :host | :port | :path]
+
+  def initialize: (?::Hash[untyped, untyped] options) -> void
+
+  def without_reconnect: () { (?) -> untyped } -> untyped
+
+  def connected?: () -> bool
+
+  def close: () -> nil
+
+  alias disconnect! close
+
+  def with: () { (untyped) -> untyped } -> untyped
+
+  def _client: () -> untyped
+
+  def pipelined: (?exception: bool) { (untyped) -> untyped } -> untyped
+
+  def id: () -> untyped
+
+  def inspect: () -> ::String
+
+  def dup: () -> untyped
+
+  def connection: () -> { host: untyped, port: untyped, db: untyped, id: untyped, location: ::String }
+
+  private
+
+  def initialize_client: (untyped options) -> untyped
+
+  def synchronize: () { (untyped) -> untyped } -> untyped
+
+  def send_command: (untyped command) { (?) -> untyped } -> untyped
+
+  def send_blocking_command: (untyped command, untyped timeout) { (?) -> untyped } -> untyped
+
+  def _subscription: (untyped method, untyped timeout, untyped channels, untyped block) -> untyped
+end
+
+class Redis
+  class Client
+    @inherit_socket: untyped
+
+    ERROR_MAPPING: ::Hash[untyped, untyped]
+
+    def self.config: (**untyped kwargs) -> untyped
+
+    def self.sentinel: (**untyped kwargs) -> untyped
+
+    def self.translate_error!: (untyped error, ?mapping: untyped) -> untyped
+
+    private
+
+    def self.translate_error_class: (untyped error_class, ?mapping: untyped) -> untyped
+
+    public
+
+    def id: () -> untyped
+
+    def server_url: () -> untyped
+
+    def timeout: () -> untyped
+
+    def db: () -> untyped
+
+    def host: () -> (untyped | nil)
+
+    def port: () -> (untyped | nil)
+
+    def path: () -> untyped
+
+    def username: () -> untyped
+
+    def password: () -> untyped
+
+    def ensure_connected: (?retryable: bool) { (?) -> untyped } -> untyped
+
+    def call_v: (untyped command) { (?) -> untyped } -> untyped
+
+    def blocking_call_v: (untyped timeout, untyped command) { (?) -> untyped } -> untyped
+
+    def pipelined: (?exception: bool) -> untyped
+
+    def multi: (?watch: untyped?) -> untyped
+
+    def inherit_socket!: () -> untyped
+  end
+end
+
+class Redis
+  module Commands
+    include Bitmaps
+
+    include Cluster
+
+    include Connection
+
+    include Geo
+
+    include Hashes
+
+    include HyperLogLog
+
+    include Keys
+
+    include Lists
+
+    include Pubsub
+
+    include Scripting
+
+    include Server
+
+    include Sets
+
+    include SortedSets
+
+    include Streams
+
+    include Strings
+
+    include Transactions
+
+    Boolify: untyped
+
+    BoolifySet: untyped
+
+    Hashify: untyped
+
+    Pairify: untyped
+
+    Floatify: untyped
+
+    FloatifyPair: untyped
+
+    FloatifyPairs: untyped
+
+    HashifyInfo: untyped
+
+    HashifyStreams: untyped
+
+    EMPTY_STREAM_RESPONSE: ::Array[nil]
+
+    HashifyStreamEntries: untyped
+
+    HashifyStreamAutoclaim: untyped
+
+    HashifyStreamAutoclaimJustId: untyped
+
+    HashifyStreamPendings: untyped
+
+    HashifyStreamPendingDetails: untyped
+
+    HashifyClusterNodeInfo: untyped
+
+    HashifyClusterSlots: untyped
+
+    HashifyClusterNodes: untyped
+
+    HashifyClusterSlaves: untyped
+
+    Noop: untyped
+
+    def call: (*untyped command) { (?) -> untyped } -> untyped
+
+    def sentinel: (String subcommand, *Array[String] args) -> (Array[String] | Hash[String, String] | String)
+
+    private
+
+    def method_missing: (*untyped command) -> untyped
+  end
+end
+
+class Redis
+  module Commands
+    module Bitmaps
+      def setbit: (String key, Integer offset, Integer value) -> Integer
+
+      def getbit: (String key, Integer offset) -> Integer
+
+      def bitcount: (String key, ?::Integer start, ?::Integer stop, ?scale: (String | Symbol)?) -> Integer
+
+      def bitop: (String operation, String destkey, *(String | Array[String]) keys) -> Integer
+
+      def bitpos: (String key, Integer bit, ?Integer start, ?Integer stop, ?scale: (String | Symbol)?) -> Integer
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Cluster
+      def cluster: (untyped subcommand, *untyped args) -> untyped
+
+      def asking: () -> String
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Connection
+      def auth: (*Array[String] args) -> String
+
+      def ping: (?String message) -> String
+
+      def echo: (String value) -> String
+
+      def select: (Integer db) -> String
+
+      def quit: () -> String
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Geo
+      def geoadd: (String key, *Array[untyped] member) -> Integer
+
+      def geohash: (String key, (String | Array[String]) member) -> Array[(String | nil)]
+
+      def georadius: (*Array[untyped] args, **untyped geoptions) -> Array[String]
+
+      def georadiusbymember: (*Array[untyped] args, **untyped geoptions) -> Array[String]
+
+      def geopos: (String key, (String | Array[String]) member) -> Array[(Array[String] | nil)]
+
+      def geodist: (untyped key, untyped member1, untyped member2, ?::String unit) -> (String | nil)
+
+      private
+
+      def _geoarguments: (*untyped args, ?options: untyped?, ?sort: untyped?, ?count: untyped?) -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Hashes
+      def hlen: (String key) -> Integer
+
+      def hset: (String key, *(Array[String] | Hash[String, String]) attrs) -> Integer
+
+      def hsetnx: (String key, String field, String value) -> bool
+
+      def hmset: (String key, *Array[String] attrs) -> String
+
+      def mapped_hmset: (String key, Hash[untyped, untyped] hash) -> String
+
+      def hget: (String key, String field) -> String?
+
+      def hmget: (String key, *Array[String] fields) { (?) -> untyped } -> Array[String]
+
+      def mapped_hmget: (String key, *Array[String] fields) -> Hash[untyped, untyped]
+
+      def hrandfield: (String key, ?Integer count, ?withvalues: bool, ?with_values: untyped) -> (nil | String | Array[String] | Array[[String, Float]])
+
+      def hdel: (String key, *untyped fields) -> Integer
+
+      def hexists: (String key, String field) -> bool
+
+      def hincrby: (String key, String field, Integer increment) -> Integer
+
+      def hincrbyfloat: (String key, String field, Float increment) -> Float
+
+      def hkeys: (String key) -> Array[String]
+
+      def hvals: (String key) -> Array[String]
+
+      def hgetall: (String key) -> Hash[String, String]
+
+      def hscan: (untyped key, (String | Integer) cursor, **Hash[untyped, untyped] options) -> (String | Array[[String, String]])
+
+      def hscan_each: (untyped key, **Hash[untyped, untyped] options) ?{ (?) -> untyped } -> Enumerator[untyped, untyped]
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module HyperLogLog
+      def pfadd: (String key, (String | Array[String]) member) -> bool
+
+      def pfcount: (*(String | Array[String]) keys) -> Integer
+
+      def pfmerge: (String dest_key, *(String | Array[String]) source_key) -> bool
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Keys
+      def scan: ((String | Integer) cursor, **Hash[untyped, untyped] options) -> (String | Array[String])
+
+      def scan_each: (**Hash[untyped, untyped] options) ?{ (?) -> untyped } -> Enumerator[untyped, untyped]
+
+      def persist: (String key) -> bool
+
+      def expire: (String key, Integer seconds, ?nx: untyped?, ?xx: untyped?, ?gt: untyped?, ?lt: untyped?) -> bool
+
+      def expireat: (String key, Integer unix_time, ?nx: untyped?, ?xx: untyped?, ?gt: untyped?, ?lt: untyped?) -> bool
+
+      def expiretime: (String key) -> Integer
+
+      def ttl: (String key) -> Integer
+
+      def pexpire: (String key, Integer milliseconds, ?nx: untyped?, ?xx: untyped?, ?gt: untyped?, ?lt: untyped?) -> bool
+
+      def pexpireat: (String key, Integer ms_unix_time, ?nx: untyped?, ?xx: untyped?, ?gt: untyped?, ?lt: untyped?) -> bool
+
+      def pexpiretime: (String key) -> Integer
+
+      def pttl: (String key) -> Integer
+
+      def dump: (String key) -> String?
+
+      def restore: (String key, String ttl, String serialized_value, ?replace: untyped?) -> String
+
+      def migrate: ((String | Array[String]) key, Hash[untyped, untyped] options) -> String
+
+      def del: (*(String | Array[String]) keys) -> (0 | untyped)
+
+      def unlink: (*(String | Array[String]) keys) -> Integer
+
+      def exists: (*(String | Array[String]) keys) -> Integer
+
+      def exists?: (*(String | Array[String]) keys) -> bool
+
+      def keys: (?::String pattern) -> Array[String]
+
+      def move: (String key, Integer db) -> bool
+
+      def copy: (String source, String destination, ?db: Integer?, ?replace: bool) -> bool
+
+      def object: (*untyped args) -> untyped
+
+      def randomkey: () -> String?
+
+      def rename: (String old_name, String new_name) -> String
+
+      def renamenx: (String old_name, String new_name) -> bool
+
+      def sort: (String key, ?by: untyped?, ?limit: untyped?, ?get: untyped?, ?order: untyped?, ?store: untyped?) -> (Array[String] | Array[Array[String]] | Integer)
+
+      def type: (String key) -> String
+
+      private
+
+      def _scan: (untyped command, untyped cursor, untyped args, ?match: untyped?, ?count: untyped?, ?type: untyped?) { (?) -> untyped } -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Lists
+      def llen: (String key) -> Integer
+
+      def lmove: (String source, String destination, (String | Symbol) where_source, (String | Symbol) where_destination) -> (nil | String)
+
+      def blmove: (String source, String destination, (String | Symbol) where_source, (String | Symbol) where_destination, ?timeout: ::Integer) -> (nil | String)
+
+      def lpush: (String key, (String | Array[String]) value) -> Integer
+
+      def lpushx: (String key, String value) -> Integer
+
+      def rpush: (String key, (String | Array[String]) value) -> Integer
+
+      def rpushx: (String key, String value) -> Integer
+
+      def lpop: (String key, ?Integer count) -> (nil | String | Array[String])
+
+      def rpop: (String key, ?Integer count) -> (nil | String | Array[String])
+
+      def rpoplpush: (String source, String destination) -> (nil | String)
+
+      def blpop: (*untyped args) -> (nil | [String, String])
+
+      def brpop: (*untyped args) -> (nil | [String, String])
+
+      def brpoplpush: (String source, String destination, ?timeout: ::Integer) -> (nil | String)
+
+      def blmpop: (untyped timeout, *untyped keys, ?modifier: ::String, ?count: untyped?) -> Array[(String | Array[(String | Float)])]
+
+      def lmpop: (*untyped keys, ?modifier: ::String, ?count: untyped?) -> Array[(String | Array[(String | Float)])]
+
+      def lindex: (String key, Integer index) -> String?
+
+      def linsert: (String key, (String | Symbol) where, String pivot, String value) -> Integer
+
+      def lrange: (String key, Integer start, Integer stop) -> Array[String]
+
+      def lrem: (String key, Integer count, String value) -> Integer
+
+      def lset: (String key, Integer index, String value) -> String
+
+      def ltrim: (String key, Integer start, Integer stop) -> String
+
+      private
+
+      def _bpop: (untyped cmd, untyped args) { (?) -> untyped } -> untyped
+
+      def _normalize_move_wheres: (untyped where_source, untyped where_destination) -> ::Array[untyped]
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Pubsub
+      def publish: (untyped channel, untyped message) -> untyped
+
+      def subscribed?: () -> bool
+
+      def subscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+      def subscribe_with_timeout: (untyped timeout, *untyped channels) { (?) -> untyped } -> untyped
+
+      def unsubscribe: (*untyped channels) -> untyped
+
+      def psubscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+      def psubscribe_with_timeout: (untyped timeout, *untyped channels) { (?) -> untyped } -> untyped
+
+      def punsubscribe: (*untyped channels) -> untyped
+
+      def pubsub: (untyped subcommand, *untyped args) -> untyped
+
+      def spublish: (untyped channel, untyped message) -> untyped
+
+      def ssubscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+      def ssubscribe_with_timeout: (untyped timeout, *untyped channels) { (?) -> untyped } -> untyped
+
+      def sunsubscribe: (*untyped channels) -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Scripting
+      def script: (String subcommand, *Array[String] args) -> untyped
+
+      def eval: (*untyped args) -> untyped
+
+      def evalsha: (*untyped args) -> untyped
+
+      private
+
+      def _eval: (untyped cmd, untyped args) -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Server
+      def bgrewriteaof: () -> String
+
+      def bgsave: () -> String
+
+      def config: (Symbol action, *untyped args) -> (String | Hash[untyped, untyped])
+
+      def client: ((String | Symbol) subcommand, *untyped args) -> (String | Hash[untyped, untyped])
+
+      def dbsize: () -> Integer
+
+      def flushall: (?Hash[untyped, untyped] options) -> String
+
+      def flushdb: (?Hash[untyped, untyped] options) -> String
+
+      def info: (?(String | Symbol) cmd) -> Hash[String, String]
+
+      def lastsave: () -> Integer
+
+      def monitor: () { (untyped) -> untyped } -> untyped
+
+      def save: () -> String
+
+      def shutdown: () -> untyped
+
+      def slaveof: (untyped host, untyped port) -> untyped
+
+      def slowlog: (String subcommand, ?Integer length) -> (Array[String] | Integer | String)
+
+      def sync: () -> untyped
+
+      def time: () -> Array[Integer]
+
+      def debug: (*untyped args) -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Sets
+      def scard: (String key) -> Integer
+
+      def sadd: (String key, *untyped members) -> Integer
+
+      def sadd?: (String key, *untyped members) -> bool
+
+      def srem: (String key, *untyped members) -> Integer
+
+      def srem?: (String key, *untyped members) -> bool
+
+      def spop: (String key, ?Integer count) -> String
+
+      def srandmember: (String key, ?Integer count) -> String
+
+      def smove: (String source, String destination, String member) -> bool
+
+      def sismember: (String key, String member) -> bool
+
+      def smismember: (String key, *(String | Array[String]) members) -> Array[bool]
+
+      def smembers: (String key) -> Array[String]
+
+      def sdiff: (*(String | Array[String]) keys) -> Array[String]
+
+      def sdiffstore: (String destination, *(String | Array[String]) keys) -> Integer
+
+      def sinter: (*(String | Array[String]) keys) -> Array[String]
+
+      def sinterstore: (String destination, *(String | Array[String]) keys) -> Integer
+
+      def sunion: (*(String | Array[String]) keys) -> Array[String]
+
+      def sunionstore: (String destination, *(String | Array[String]) keys) -> Integer
+
+      def sscan: (untyped key, (String | Integer) cursor, **Hash[untyped, untyped] options) -> (String | Array[String])
+
+      def sscan_each: (untyped key, **Hash[untyped, untyped] options) ?{ (?) -> untyped } -> Enumerator[untyped, untyped]
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module SortedSets
+      def zcard: (String key) -> Integer
+
+      def zadd: (String key, *([Float, String] | Array[[Float, String]]) args, ?nx: untyped?, ?xx: untyped?, ?lt: untyped?, ?gt: untyped?, ?ch: untyped?, ?incr: untyped?) -> (0 | untyped)
+
+      def zincrby: (String key, Float increment, String member) -> Float
+
+      def zrem: (String key, (String | Array[String]) member) -> (0 | untyped)
+
+      def zpopmax: (untyped key, ?untyped? count) -> Array[Array[(String | Float)]]
+
+      def zpopmin: (untyped key, ?untyped? count) -> Array[Array[(String | Float)]]
+
+      def bzmpop: (untyped timeout, *untyped keys, ?modifier: ::String, ?count: untyped?) -> Array[(String | Array[(String | Float)])]
+
+      def zmpop: (*untyped keys, ?modifier: ::String, ?count: untyped?) -> Array[(String | Array[(String | Float)])]
+
+      def bzpopmax: (*untyped args) -> nil
+
+      def bzpopmin: (*untyped args) -> nil
+
+      def zscore: (String key, String member) -> Float?
+
+      def zmscore: (String key, *(String | Array[String]) members) -> Array[Float]
+
+      def zrandmember: (String key, ?Integer count, ?withscores: bool, ?with_scores: untyped) -> (nil | String | Array[String] | Array[[String, Float]])
+
+      def zrange: (String key, Integer start, Integer stop, ?byscore: bool, ?by_score: untyped, ?bylex: bool, ?by_lex: untyped, ?rev: bool, ?limit: untyped?, ?withscores: bool, ?with_scores: untyped) -> (Array[String] | Array[[String, Float]])
+
+      def zrangestore: (untyped dest_key, untyped src_key, untyped start, untyped stop, ?byscore: bool, ?by_score: untyped, ?bylex: bool, ?by_lex: untyped, ?rev: bool, ?limit: untyped?) -> Integer
+
+      def zrevrange: (untyped key, untyped start, untyped stop, ?withscores: bool, ?with_scores: untyped) -> untyped
+
+      def zrank: (String key, String member, ?withscore: bool, ?with_score: untyped) -> (Integer | [Integer, Float])
+
+      def zrevrank: (String key, String member, ?withscore: bool, ?with_score: untyped) -> (Integer | [Integer, Float])
+
+      def zremrangebyrank: (String key, Integer start, Integer stop) -> Integer
+
+      def zlexcount: (String key, String min, String max) -> Integer
+
+      def zrangebylex: (String key, String min, String max, ?limit: untyped?) -> (Array[String] | Array[[String, Float]])
+
+      def zrevrangebylex: (untyped key, untyped max, untyped min, ?limit: untyped?) -> untyped
+
+      def zrangebyscore: (String key, String min, String max, ?withscores: bool, ?with_scores: untyped, ?limit: untyped?) -> (Array[String] | Array[[String, Float]])
+
+      def zrevrangebyscore: (untyped key, untyped max, untyped min, ?withscores: bool, ?with_scores: untyped, ?limit: untyped?) -> untyped
+
+      def zremrangebyscore: (String key, String min, String max) -> Integer
+
+      def zcount: (String key, String min, String max) -> Integer
+
+      def zinter: (*untyped args) -> (Array[String] | Array[[String, Float]])
+
+      def zinterstore: (*untyped args) -> Integer
+
+      def zunion: (*untyped args) -> (Array[String] | Array[[String, Float]])
+
+      def zunionstore: (*untyped args) -> Integer
+
+      def zdiff: (*(String | Array[String]) keys, ?with_scores: bool) -> (Array[String] | Array[[String, Float]])
+
+      def zdiffstore: (*untyped args) -> Integer
+
+      def zscan: (untyped key, (String | Integer) cursor, **Hash[untyped, untyped] options) -> (String | Array[[String, Float]])
+
+      def zscan_each: (untyped key, **Hash[untyped, untyped] options) ?{ (?) -> untyped } -> Enumerator[untyped, untyped]
+
+      private
+
+      def _zsets_operation: (untyped cmd, *untyped keys, ?weights: untyped?, ?aggregate: untyped?, ?with_scores: bool) -> untyped
+
+      def _zsets_operation_store: (untyped cmd, untyped destination, untyped keys, ?weights: untyped?, ?aggregate: untyped?) -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Streams
+      def xinfo: (untyped subcommand, untyped key, ?untyped? group) -> Array[Hash[untyped, untyped]]
+
+      def xadd: (untyped key, untyped entry, ?approximate: untyped?, ?maxlen: untyped?, ?minid: untyped?, ?nomkstream: untyped?, ?id: ::String) -> String
+
+      def xtrim: (untyped key, untyped len_or_id, ?strategy: ::String, ?approximate: bool, ?limit: untyped?) -> Integer
+
+      def xdel: (untyped key, *untyped ids) -> Integer
+
+      def xrange: (untyped key, ?::String start, ?::String range_end, ?count: untyped?) -> Array[Array[(String | Hash[untyped, untyped])]]
+
+      def xrevrange: (untyped key, ?::String range_end, ?::String start, ?count: untyped?) -> Array[Array[(String | Hash[untyped, untyped])]]
+
+      def xlen: (untyped key) -> Integer
+
+      def xread: (untyped keys, untyped ids, ?count: untyped?, ?block: untyped?) -> Hash[String, Hash[String, Hash[untyped, untyped]]]
+
+      def xgroup: (untyped subcommand, untyped key, untyped group, ?untyped? id_or_consumer, ?mkstream: bool) -> Integer
+
+      def xreadgroup: (untyped group, untyped consumer, untyped keys, untyped ids, ?count: untyped?, ?block: untyped?, ?noack: untyped?) -> Hash[String, Hash[String, Hash[untyped, untyped]]]
+
+      def xack: (untyped key, untyped group, *untyped ids) -> Integer
+
+      def xclaim: (untyped key, untyped group, untyped consumer, untyped min_idle_time, *untyped ids, **untyped opts) -> Array[String]
+
+      def xautoclaim: (untyped key, untyped group, untyped consumer, untyped min_idle_time, untyped start, ?count: untyped?, ?justid: bool) -> Array[String]
+
+      def xpending: (untyped key, untyped group, *untyped args, ?idle: untyped?) -> Array[Hash[untyped, untyped]]
+
+      private
+
+      def _xread: (untyped args, untyped keys, untyped ids, untyped blocking_timeout_msec) -> untyped
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Strings
+      def decr: (String key) -> Integer
+
+      def decrby: (String key, Integer decrement) -> Integer
+
+      def incr: (String key) -> Integer
+
+      def incrby: (String key, Integer increment) -> Integer
+
+      def incrbyfloat: (String key, Float increment) -> Float
+
+      def set: (String key, String value, ?ex: untyped?, ?px: untyped?, ?exat: untyped?, ?pxat: untyped?, ?nx: untyped?, ?xx: untyped?, ?keepttl: untyped?, ?get: untyped?) -> (String | bool)
+
+      def setex: (String key, Integer ttl, String value) -> String
+
+      def psetex: (String key, Integer ttl, String value) -> String
+
+      def setnx: (String key, String value) -> bool
+
+      def mset: (*Array[String] args) -> String
+
+      def mapped_mset: (Hash[untyped, untyped] hash) -> String
+
+      def msetnx: (*Array[String] args) -> bool
+
+      def mapped_msetnx: (Hash[untyped, untyped] hash) -> bool
+
+      def get: (String key) -> String?
+
+      def mget: (*Array[String] keys) { (?) -> untyped } -> Array[String]
+
+      def mapped_mget: (*Array[String] keys) -> Hash[untyped, untyped]
+
+      def setrange: (String key, Integer offset, String value) -> Integer
+
+      def getrange: (String key, Integer start, Integer stop) -> String
+
+      def append: (String key, String value) -> Integer
+
+      def getset: (String key, String value) -> String?
+
+      def getdel: (String key) -> String?
+
+      def getex: (String key, ?ex: untyped?, ?px: untyped?, ?exat: untyped?, ?pxat: untyped?, ?persist: bool) -> String?
+
+      def strlen: (String key) -> Integer
+    end
+  end
+end
+
+class Redis
+  module Commands
+    module Transactions
+      def multi: () { (untyped) -> untyped } -> untyped
+
+      def watch: (*(String | Array[String]) keys) ?{ (untyped) -> untyped } -> String
+
+      def unwatch: () -> String
+
+      def exec: () -> untyped
+
+      def discard: () -> String
+    end
+  end
+end
+
+class Redis
+  class Distributed
+    @tag: untyped
+
+    @ring: untyped
+
+    @node_configs: untyped
+
+    @default_options: untyped
+
+    @subscribed_node: untyped
+
+    @watch_key: untyped
+
+    class CannotDistribute < RuntimeError
+      @command: untyped
+
+      def initialize: (untyped command) -> void
+
+      def message: () -> ::String
+    end
+
+    attr_reader ring: untyped
+
+    def initialize: (untyped node_configs, ?::Hash[untyped, untyped] options) -> void
+
+    def node_for: (untyped key) -> untyped
+
+    def nodes: () -> untyped
+
+    def add_node: (untyped options) -> untyped
+
+    def select: (untyped db) -> untyped
+
+    def ping: () -> untyped
+
+    def echo: (untyped value) -> untyped
+
+    def quit: () -> untyped
+
+    def close: () -> nil
+
+    def bgsave: () -> untyped
+
+    def dbsize: () -> untyped
+
+    def flushall: () -> untyped
+
+    def flushdb: () -> untyped
+
+    def info: (?untyped? cmd) -> untyped
+
+    def lastsave: () -> untyped
+
+    def monitor: () -> untyped
+
+    def save: () -> untyped
+
+    def time: () -> untyped
+
+    def persist: (untyped key) -> untyped
+
+    def expire: (untyped key, untyped seconds, **untyped kwargs) -> untyped
+
+    def expireat: (untyped key, untyped unix_time, **untyped kwargs) -> untyped
+
+    def expiretime: (untyped key) -> untyped
+
+    def ttl: (untyped key) -> untyped
+
+    def pexpire: (untyped key, untyped milliseconds, **untyped kwarg) -> untyped
+
+    def pexpireat: (untyped key, untyped ms_unix_time, **untyped kwarg) -> untyped
+
+    def pexpiretime: (untyped key) -> untyped
+
+    def pttl: (untyped key) -> untyped
+
+    def dump: (untyped key) -> String?
+
+    def restore: (untyped key, untyped ttl, untyped serialized_value, **untyped options) -> untyped
+
+    def migrate: (untyped _key, untyped _options) -> untyped
+
+    def del: (*untyped args) -> untyped
+
+    def unlink: (*untyped args) -> untyped
+
+    def exists: (*untyped args) -> untyped
+
+    def exists?: (*untyped args) -> (true | false)
+
+    def keys: (?::String glob) -> untyped
+
+    def move: (untyped key, untyped db) -> untyped
+
+    def copy: (untyped source, untyped destination, **untyped options) -> untyped
+
+    def randomkey: () -> String?
+
+    def rename: (untyped old_name, untyped new_name) -> untyped
+
+    def renamenx: (untyped old_name, untyped new_name) -> untyped
+
+    def sort: (untyped key, **untyped options) -> untyped
+
+    def type: (untyped key) -> untyped
+
+    def decr: (untyped key) -> untyped
+
+    def decrby: (untyped key, untyped decrement) -> untyped
+
+    def incr: (untyped key) -> untyped
+
+    def incrby: (untyped key, untyped increment) -> untyped
+
+    def incrbyfloat: (untyped key, untyped increment) -> untyped
+
+    def set: (untyped key, untyped value, **untyped options) -> untyped
+
+    def setex: (untyped key, untyped ttl, untyped value) -> untyped
+
+    def psetex: (untyped key, untyped ttl, untyped value) -> untyped
+
+    def setnx: (untyped key, untyped value) -> untyped
+
+    def mset: (*untyped) -> untyped
+
+    def mapped_mset: (untyped _hash) -> untyped
+
+    def msetnx: (*untyped) -> untyped
+
+    def mapped_msetnx: (untyped _hash) -> untyped
+
+    def get: (untyped key) -> String?
+
+    def getdel: (untyped key) -> String?
+
+    def getex: (untyped key, **untyped options) -> String?
+
+    def mget: (*untyped keys) -> untyped
+
+    def mapped_mget: (*untyped keys) -> untyped
+
+    def setrange: (untyped key, untyped offset, untyped value) -> untyped
+
+    def getrange: (untyped key, untyped start, untyped stop) -> String
+
+    def setbit: (untyped key, untyped offset, untyped value) -> untyped
+
+    def getbit: (untyped key, untyped offset) -> untyped
+
+    def append: (untyped key, untyped value) -> untyped
+
+    def bitcount: (untyped key, ?::Integer start, ?::Integer stop, ?scale: untyped?) -> untyped
+
+    def bitop: (untyped operation, untyped destkey, *untyped keys) -> untyped
+
+    def bitpos: (untyped key, untyped bit, ?untyped? start, ?untyped? stop, ?scale: untyped?) -> untyped
+
+    def getset: (untyped key, untyped value) -> String?
+
+    def strlen: (untyped key) -> untyped
+
+    def []: (untyped key) -> untyped
+
+    def []=: (untyped key, untyped value) -> untyped
+
+    def llen: (untyped key) -> untyped
+
+    def lmove: (untyped source, untyped destination, untyped where_source, untyped where_destination) -> untyped
+
+    def blmove: (untyped source, untyped destination, untyped where_source, untyped where_destination, ?timeout: ::Integer) -> untyped
+
+    def lpush: (untyped key, untyped value) -> untyped
+
+    def lpushx: (untyped key, untyped value) -> untyped
+
+    def rpush: (untyped key, untyped value) -> untyped
+
+    def rpushx: (untyped key, untyped value) -> untyped
+
+    def lpop: (untyped key, ?untyped? count) -> untyped
+
+    def rpop: (untyped key, ?untyped? count) -> untyped
+
+    def rpoplpush: (untyped source, untyped destination) -> untyped
+
+    def _bpop: (untyped cmd, untyped args) -> untyped
+
+    def blpop: (*untyped args) -> untyped
+
+    def bzpopmax: (*untyped args) -> untyped
+
+    def bzpopmin: (*untyped args) -> untyped
+
+    def brpop: (*untyped args) -> untyped
+
+    def brpoplpush: (untyped source, untyped destination, **untyped options) -> untyped
+
+    def lindex: (untyped key, untyped index) -> String?
+
+    def linsert: (untyped key, untyped where, untyped pivot, untyped value) -> untyped
+
+    def lrange: (untyped key, untyped start, untyped stop) -> untyped
+
+    def lrem: (untyped key, untyped count, untyped value) -> untyped
+
+    def lset: (untyped key, untyped index, untyped value) -> untyped
+
+    def ltrim: (untyped key, untyped start, untyped stop) -> untyped
+
+    def blmpop: (untyped timeout, *untyped keys, ?modifier: ::String, ?count: untyped?) -> untyped
+
+    def lmpop: (*untyped keys, ?modifier: ::String, ?count: untyped?) -> untyped
+
+    def scard: (untyped key) -> untyped
+
+    def sadd: (untyped key, *untyped members) -> untyped
+
+    def sadd?: (untyped key, *untyped members) -> bool
+
+    def srem: (untyped key, *untyped members) -> untyped
+
+    def srem?: (untyped key, *untyped members) -> bool
+
+    def spop: (untyped key, ?untyped? count) -> untyped
+
+    def srandmember: (untyped key, ?untyped? count) -> untyped
+
+    def smove: (untyped source, untyped destination, untyped member) -> untyped
+
+    def sismember: (untyped key, untyped member) -> untyped
+
+    def smismember: (untyped key, *untyped members) -> untyped
+
+    def smembers: (untyped key) -> untyped
+
+    def sscan: (untyped key, untyped cursor, **untyped options) -> untyped
+
+    def sscan_each: (untyped key, **untyped options) { (?) -> untyped } -> untyped
+
+    def sdiff: (*untyped keys) -> untyped
+
+    def sdiffstore: (untyped destination, *untyped keys) -> untyped
+
+    def sinter: (*untyped keys) -> untyped
+
+    def sinterstore: (untyped destination, *untyped keys) -> untyped
+
+    def sunion: (*untyped keys) -> untyped
+
+    def sunionstore: (untyped destination, *untyped keys) -> untyped
+
+    def zcard: (untyped key) -> untyped
+
+    def zadd: (untyped key, *untyped args) -> untyped
+
+    def zincrby: (untyped key, untyped increment, untyped member) -> untyped
+
+    def zrem: (untyped key, untyped member) -> untyped
+
+    def zscore: (untyped key, untyped member) -> Float?
+
+    def zrandmember: (untyped key, ?untyped? count, **untyped options) -> untyped
+
+    def zmscore: (untyped key, *untyped members) -> untyped
+
+    def bzmpop: (untyped timeout, *untyped keys, ?modifier: ::String, ?count: untyped?) -> untyped
+
+    def zmpop: (*untyped keys, ?modifier: ::String, ?count: untyped?) -> untyped
+
+    def zrange: (untyped key, untyped start, untyped stop, **untyped options) -> untyped
+
+    def zrangestore: (untyped dest_key, untyped src_key, untyped start, untyped stop, **untyped options) -> untyped
+
+    def zrevrange: (untyped key, untyped start, untyped stop, **untyped options) -> untyped
+
+    def zrank: (untyped key, untyped member, **untyped options) -> untyped
+
+    def zrevrank: (untyped key, untyped member, **untyped options) -> untyped
+
+    def zremrangebyrank: (untyped key, untyped start, untyped stop) -> untyped
+
+    def zrangebyscore: (untyped key, untyped min, untyped max, **untyped options) -> untyped
+
+    def zrevrangebyscore: (untyped key, untyped max, untyped min, **untyped options) -> untyped
+
+    def zremrangebyscore: (untyped key, untyped min, untyped max) -> untyped
+
+    def zcount: (untyped key, untyped min, untyped max) -> untyped
+
+    def zinter: (*untyped keys, **untyped options) -> untyped
+
+    def zinterstore: (untyped destination, *untyped keys, **untyped options) -> untyped
+
+    def zunion: (*untyped keys, **untyped options) -> untyped
+
+    def zunionstore: (untyped destination, *untyped keys, **untyped options) -> untyped
+
+    def zdiff: (*untyped keys, **untyped options) -> untyped
+
+    def zdiffstore: (untyped destination, *untyped keys, **untyped options) -> untyped
+
+    def hlen: (untyped key) -> untyped
+
+    def hset: (untyped key, *untyped attrs) -> untyped
+
+    def hsetnx: (untyped key, untyped field, untyped value) -> untyped
+
+    def hmset: (untyped key, *untyped attrs) -> untyped
+
+    def mapped_hmset: (untyped key, untyped hash) -> untyped
+
+    def hget: (untyped key, untyped field) -> String?
+
+    def hmget: (untyped key, *untyped fields) -> untyped
+
+    def mapped_hmget: (untyped key, *untyped fields) -> untyped
+
+    def hrandfield: (untyped key, ?untyped? count, **untyped options) -> untyped
+
+    def hdel: (untyped key, *untyped fields) -> untyped
+
+    def hexists: (untyped key, untyped field) -> untyped
+
+    def hincrby: (untyped key, untyped field, untyped increment) -> untyped
+
+    def hincrbyfloat: (untyped key, untyped field, untyped increment) -> untyped
+
+    def hkeys: (untyped key) -> untyped
+
+    def hvals: (untyped key) -> untyped
+
+    def hgetall: (untyped key) -> untyped
+
+    def publish: (untyped channel, untyped message) -> untyped
+
+    def subscribed?: () -> bool
+
+    def subscribe: (untyped channel, *untyped channels) { (?) -> untyped } -> untyped
+
+    def unsubscribe: (*untyped channels) -> untyped
+
+    def psubscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+    def punsubscribe: (*untyped channels) -> untyped
+
+    def watch: (*untyped keys) { (?) -> untyped } -> untyped
+
+    def unwatch: () -> untyped
+
+    def pipelined: () -> untyped
+
+    def multi: () { (?) -> untyped } -> untyped
+
+    def exec: () -> untyped
+
+    def discard: () -> untyped
+
+    def script: (untyped subcommand, *untyped args) -> untyped
+
+    def pfadd: (untyped key, untyped member) -> untyped
+
+    def pfcount: (*untyped keys) -> untyped
+
+    def pfmerge: (untyped dest_key, *untyped source_key) -> untyped
+
+    def _eval: (untyped cmd, untyped args) -> untyped
+
+    def eval: (*untyped args) -> untyped
+
+    def evalsha: (*untyped args) -> untyped
+
+    def inspect: () -> ::String
+
+    def dup: () -> untyped
+
+    def on_each_node: (untyped command, *untyped args) -> untyped
+
+    def node_index_for: (untyped key) -> untyped
+
+    def key_tag: (untyped key) -> untyped
+
+    def ensure_same_node: (untyped command, untyped keys) { (untyped) -> untyped } -> untyped
+  end
+end
+
+class Redis
+  class BaseError < StandardError
+  end
+
+  class ProtocolError < BaseError
+    def initialize: (untyped reply_type) -> void
+  end
+
+  class CommandError < BaseError
+  end
+
+  class PermissionError < CommandError
+  end
+
+  class WrongTypeError < CommandError
+  end
+
+  class OutOfMemoryError < CommandError
+  end
+
+  class NoScriptError < CommandError
+  end
+
+  class BaseConnectionError < BaseError
+  end
+
+  class CannotConnectError < BaseConnectionError
+  end
+
+  class ConnectionError < BaseConnectionError
+  end
+
+  class TimeoutError < BaseConnectionError
+  end
+
+  class InheritedError < BaseConnectionError
+  end
+
+  class ReadOnlyError < BaseConnectionError
+  end
+
+  class InvalidClientOptionError < BaseError
+  end
+
+  class SubscriptionError < BaseError
+  end
+end
+
+class Redis
+  class HashRing
+    @replicas: untyped
+
+    @ring: untyped
+
+    @nodes: untyped
+
+    @sorted_keys: untyped
+
+    POINTS_PER_SERVER: 160
+
+    attr_reader ring: untyped
+
+    attr_reader sorted_keys: untyped
+
+    attr_reader replicas: untyped
+
+    attr_reader nodes: untyped
+
+    def initialize: (?untyped nodes, ?untyped replicas) -> void
+
+    def add_node: (untyped node) -> untyped
+
+    def remove_node: (untyped node) -> untyped
+
+    def get_node: (untyped key) -> untyped
+
+    def iter_nodes: (untyped key) { (untyped) -> untyped } -> (::Array[nil] | untyped)
+
+    private
+
+    def hash_for: (untyped key) -> untyped
+
+    def server_hash_for: (untyped key) -> untyped
+
+    def binary_search: (untyped ary, untyped value) -> untyped
+  end
+end
+
+class Redis
+  class PipelinedConnection
+    @pipeline: untyped
+
+    @futures: untyped
+
+    @exception: untyped
+
+    attr_accessor db: untyped
+
+    def initialize: (untyped pipeline, ?untyped futures, ?exception: bool) -> void
+
+    include Commands
+
+    def pipelined: () { (untyped) -> untyped } -> untyped
+
+    def multi: () { (untyped) -> untyped } -> untyped
+
+    private
+
+    def synchronize: () { (untyped) -> untyped } -> untyped
+
+    def send_command: (untyped command) { (?) -> untyped } -> untyped
+
+    def send_blocking_command: (untyped command, untyped timeout) { (?) -> untyped } -> untyped
+  end
+
+  class MultiConnection < PipelinedConnection
+    def multi: () -> untyped
+
+    private
+
+    def send_blocking_command: (untyped command, untyped _timeout) { (?) -> untyped } -> untyped
+  end
+
+  class FutureNotReady < RuntimeError
+    def initialize: () -> void
+  end
+
+  class Future < BasicObject
+    @command: untyped
+
+    @object: untyped
+
+    @coerce: untyped
+
+    @exception: untyped
+
+    FutureNotReady: untyped
+
+    def initialize: (untyped command, untyped coerce, untyped exception) -> void
+
+    def inspect: () -> ::String
+
+    def _set: (untyped object) -> untyped
+
+    def value: () -> untyped
+
+    def is_a?: (untyped other) -> bool
+
+    def class: () -> untyped
+  end
+
+  class MultiFuture < Future
+    @futures: untyped
+
+    @command: untyped
+
+    @object: untyped
+
+    def initialize: (untyped futures) -> void
+
+    def _set: (untyped replies) -> untyped
+  end
+end
+
+class Redis
+  class SubscribedClient
+    @client: untyped
+
+    @write_monitor: untyped
+
+    def initialize: (untyped client) -> void
+
+    def call_v: (untyped command) -> untyped
+
+    def subscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+    def subscribe_with_timeout: (untyped timeout, *untyped channels) { (?) -> untyped } -> untyped
+
+    def psubscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+    def psubscribe_with_timeout: (untyped timeout, *untyped channels) { (?) -> untyped } -> untyped
+
+    def ssubscribe: (*untyped channels) { (?) -> untyped } -> untyped
+
+    def ssubscribe_with_timeout: (untyped timeout, *untyped channels) { (?) -> untyped } -> untyped
+
+    def unsubscribe: (*untyped channels) -> untyped
+
+    def punsubscribe: (*untyped channels) -> untyped
+
+    def sunsubscribe: (*untyped channels) -> untyped
+
+    def close: () -> nil
+
+    def subscription: (untyped start, untyped stop, untyped channels, untyped block, ?::Integer timeout) -> untyped
+  end
+
+  class Subscription
+    @callbacks: untyped
+
+    def initialize: () { (untyped) -> untyped } -> void
+
+    def subscribe: () { (?) -> untyped } -> untyped
+
+    def unsubscribe: () { (?) -> untyped } -> untyped
+
+    def message: () { (?) -> untyped } -> untyped
+
+    def psubscribe: () { (?) -> untyped } -> untyped
+
+    def punsubscribe: () { (?) -> untyped } -> untyped
+
+    def pmessage: () { (?) -> untyped } -> untyped
+
+    def ssubscribe: () { (?) -> untyped } -> untyped
+
+    def sunsubscribe: () { (?) -> untyped } -> untyped
+
+    def smessage: () { (?) -> untyped } -> untyped
+  end
+end
+
+class Redis
+  VERSION: "5.4.1"
+end

@@ -1,0 +1,6 @@
+---
+redis_version: 5.4.1
+source_files: 25
+source_method_definitions: 495
+signature_method_declarations: 495
+typed_return_declarations: 227
