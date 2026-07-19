@@ -6,7 +6,8 @@ Publicar firmas RBS completas y regenerables para `redis` 5.4.1.
 
 ## Tarea actual
 
-Publicar la versión inicial en GitHub y RubyGems.
+Completar la publicación 0.1.0 en RubyGems cuando un propietario autentique la
+cuenta y configure Trusted Publishing.
 
 ## Estado actual
 
@@ -17,17 +18,21 @@ Publicar la versión inicial en GitHub y RubyGems.
   validación de fuentes y validación del paquete instalado exitosas.
 - La cobertura registrada es 495 declaraciones para 495 métodos fuente; 227
   retornos tienen tipos específicos.
+- El código validado quedó en `a8ef14a`; el CI de GitHub pasa en Ruby 3.3 y 3.4.
+- La publicación RubyGems está bloqueada: no hay credencial local y la sesión
+  del navegador no estaba autenticada. La pestaña de inicio de sesión quedó
+  abierta como handoff; no se creó el tag para evitar un release fallido.
 
 ## Proximos pasos
 
-1. Confirmar y subir el commit inicial a `main`.
-2. Configurar el pending trusted publisher de RubyGems para
-   `.github/workflows/release.yml`, entorno `release`.
-3. Crear y subir el tag `v0.1.0`; verificar workflow y versión pública.
+1. Iniciar sesión en RubyGems.org.
+2. Crear el pending trusted publisher para owner `ldebortoli`, repositorio
+   `redis-rbs`, workflow `release.yml` y entorno `release`.
+3. Crear y subir el tag `v0.1.0`; verificar el workflow Release y la versión
+   pública antes de marcar la tarea como DONE.
 
 ## Riesgos
 
 - La colección comunitaria existente para Redis 4.2 sirve sólo de referencia;
   no representa la arquitectura ni todos los comandos de 5.4.1.
-- No hay archivo local de credenciales RubyGems; la publicación puede quedar
-  bloqueada aunque el repositorio y el paquete estén completos.
+- El único bloqueo actual es la autenticación/configuración de RubyGems.
