@@ -19,13 +19,14 @@ cuenta y configure Trusted Publishing.
 - La cobertura registrada es 495 declaraciones para 495 métodos fuente; 227
   retornos tienen tipos específicos.
 - El código validado quedó en `a8ef14a`; el CI de GitHub pasa en Ruby 3.3 y 3.4.
-- La publicación RubyGems está bloqueada: no hay credencial local y la sesión
-  del navegador no estaba autenticada. La pestaña de inicio de sesión quedó
-  abierta como handoff; no se creó el tag para evitar un release fallido.
+- La sesión RubyGems.org ya está autenticada, pero al abrir Pending Trusted
+  Publishers el sitio exige reconfirmar la contraseña. Esa pantalla quedó
+  abierta para que el usuario la complete; no se creó el tag para evitar un
+  release fallido.
 
 ## Proximos pasos
 
-1. Iniciar sesión en RubyGems.org.
+1. Reconfirmar la contraseña en la pestaña RubyGems.org abierta.
 2. Crear el pending trusted publisher para owner `ldebortoli`, repositorio
    `redis-rbs`, workflow `release.yml` y entorno `release`.
 3. Crear y subir el tag `v0.1.0`; verificar el workflow Release y la versión
