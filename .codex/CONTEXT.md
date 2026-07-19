@@ -13,6 +13,8 @@ cliente, sus módulos de comandos, pipelines, suscripciones y clases auxiliares.
 - Git: True
 - Rama detectada: `main`
 - Remoto origin: `https://github.com/ldebortoli/redis-rbs.git`
+- RubyGems: `https://rubygems.org/gems/redis-rbs`
+- Versión pública actual: `0.1.0`
 
 ## Arquitectura
 
